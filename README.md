@@ -1,5 +1,6 @@
 # code-academy-recipies
 A RESTful application for recipies
+Please check post man collection for the apis
 
 ## Codecademy Engineering Machine Coding – Ver 2
 
