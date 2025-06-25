@@ -12,6 +12,7 @@ type DataSource interface {
 	CreateRecipie(ctx context.Context, recipie models.Recipie) (int, error)
 	GetRecipie(ctx context.Context, id int) (*models.Recipie, error)
 	DeleteRecipie(ctx context.Context, id int) (error)
+	UpdateRecipie(ctx context.Context, recipie models.Recipie) (error)
 }
 
 type RecipieService struct {
@@ -44,6 +45,15 @@ func (s *RecipieService) CreateRecipie(ctx context.Context, recipie models.Recip
 
 func (s *RecipieService) DeleteRecipie(ctx context.Context, id int) (error) {
 	err := s.d.DeleteRecipie(ctx, id)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *RecipieService) UpdateRecipie(ctx context.Context, recipie models.Recipie, id int) (error) {
+	recipie.ID = id
+	err := s.d.UpdateRecipie(ctx, recipie)
 	if err != nil {
 		return err
 	}

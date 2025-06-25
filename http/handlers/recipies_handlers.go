@@ -13,6 +13,7 @@ type RecipiesService interface {
 	CreateRecipie(ctx context.Context, recipie models.Recipie) (int, error)
 	GetRecipie(ctx context.Context, id int) (*models.Recipie, error)
 	DeleteRecipie(ctx context.Context, id int) error
+	UpdateRecipie(ctx context.Context, recipie models.Recipie, id int) error
 }
 
 type RecipiesHandlers struct {
@@ -62,4 +63,21 @@ func (r *RecipiesHandlers) DeleteRecipie(c *gin.Context) {
 		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "recipie not found"})
 	}
 	c.IndentedJSON(http.StatusOK, gin.H{"message": "deleted successfully"})
+}
+
+func (r *RecipiesHandlers) UpdateRecipie(c *gin.Context) {
+	var recipie models.Recipie
+	if err := c.BindJSON(&recipie); err != nil {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "invalid recipie"})
+		return
+	}
+	id, err := strconv.Atoi(c.Query("id"))
+	if err != nil {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "invalid recipie id"})
+	}
+	err = r.service.UpdateRecipie(c.Request.Context(), recipie, id)
+	if err != nil {
+		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "recipie not found"})
+	}
+	c.IndentedJSON(http.StatusOK, gin.H{"message": "updated successfully"})
 }
