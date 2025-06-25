@@ -72,3 +72,48 @@ func (d *DataSource) DeleteRecipie(ctx context.Context, id int) (error) {
 	}
 	return nil
 }
+
+func (d *DataSource) SearchRecipies(ctx context.Context, query string, skip int, limit int) ([]models.Recipie, error) {
+	collection := d.client.Database(d.database).Collection(d.collection)
+	filter := bson.M{"$text": bson.M{"$search": query}}
+	cursor, err := collection.Find(ctx, filter)
+	if err != nil {
+		d.logger.Error("error while searching recipies", zap.Error(err))
+		return nil, err
+	}
+	var recipies []models.Recipie
+	err = cursor.All(ctx, &recipies)
+	if err != nil {
+		d.logger.Error("error while searching recipies", zap.Error(err))
+		return nil, err
+	}
+	return recipies, nil
+}
+
+func (d *DataSource) ListRecipies(ctx context.Context, skip int, limit int) ([]models.Recipie, error) {
+	collection := d.client.Database(d.database).Collection(d.collection)
+	filter := bson.M{}
+	cursor, err := collection.Find(ctx, filter)
+	if err != nil {
+		d.logger.Error("error while listing recipies", zap.Error(err))
+		return nil, err
+	}
+	var recipies []models.Recipie
+	err = cursor.All(ctx, &recipies)
+	if err != nil {
+		d.logger.Error("error while listing recipies", zap.Error(err))
+		return nil, err
+	}
+	return recipies, nil
+}
+
+func (d *DataSource) GetRecipiesCount(ctx context.Context) (int, error) {
+	collection := d.client.Database(d.database).Collection(d.collection)
+	filter := bson.M{}
+	count, err := collection.CountDocuments(ctx, filter)
+	if err != nil {
+		d.logger.Error("error while getting recipies count", zap.Error(err))
+		return -1, err
+	}
+	return int(count), nil
+}

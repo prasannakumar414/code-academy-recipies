@@ -18,5 +18,6 @@ func (s *Server) ListenAndServe(address string) error {
 	router.POST("/", s.handlers.RecipieHandlers.CreateRecipie)
 	router.DELETE("/", s.handlers.RecipieHandlers.DeleteRecipie)
 	router.PUT("/", s.handlers.RecipieHandlers.UpdateRecipie)
+	router.GET("/paginataion", s.handlers.RecipieHandlers.RecipiePagination)
 	return router.Run(address)
 }

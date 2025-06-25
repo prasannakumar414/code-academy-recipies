@@ -6,7 +6,6 @@ require (
 	github.com/gin-gonic/gin v1.10.1
 	go.mongodb.org/mongo-driver/v2 v2.2.2
 	go.uber.org/zap v1.27.0
-	golang.org/x/exp v0.0.0-20250620022241-b7579e27df2b
 )
 
 require (

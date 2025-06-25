@@ -14,6 +14,8 @@ type RecipiesService interface {
 	GetRecipie(ctx context.Context, id int) (*models.Recipie, error)
 	DeleteRecipie(ctx context.Context, id int) error
 	UpdateRecipie(ctx context.Context, recipie models.Recipie, id int) error
+	GetRecipiesPagination(ctx context.Context, skip int, limit int) (*models.RecipiePagination, error)
+	SearchRecipies(ctx context.Context, query string) (*models.RecipiePagination, error)
 }
 
 type RecipiesHandlers struct {
@@ -80,4 +82,26 @@ func (r *RecipiesHandlers) UpdateRecipie(c *gin.Context) {
 		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "recipie not found"})
 	}
 	c.IndentedJSON(http.StatusOK, gin.H{"message": "updated successfully"})
+}
+
+func (r *RecipiesHandlers) RecipiePagination(c *gin.Context) {
+	var recipiePaginationRequest models.RecipiePaginationRequest
+    limit, err := strconv.Atoi(c.Query("limit"))
+	if err != nil {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "invalid limit"})
+	}
+	recipiePaginationRequest.Limit = limit
+	skip, err := strconv.Atoi(c.Query("skip"))
+	if err != nil {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "invalid skip"})
+	}
+	recipiePaginationRequest.Skip = skip
+	recipiePaginationRequest.Query = c.Query("query")
+
+	recipiePagination, err := r.service.GetRecipiesPagination(c.Request.Context(), recipiePaginationRequest.Skip, recipiePaginationRequest.Limit)
+	if err != nil {
+		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "error getting pagination"})
+		return
+	}
+	c.IndentedJSON(http.StatusOK, recipiePagination)
 }
