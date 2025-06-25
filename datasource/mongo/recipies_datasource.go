@@ -51,3 +51,24 @@ func (d *DataSource) GetRecipie(ctx context.Context, id int) (*models.Recipie, e
 	return &recipie, nil
 }
 
+func (d *DataSource) UpdateRecipie(ctx context.Context, recipie models.Recipie) (error) {
+	collection := d.client.Database(d.database).Collection(d.collection)
+	filter := bson.M{"id": recipie.ID}
+	update := bson.M{"$set": recipie}
+	_, err := collection.UpdateOne(ctx, filter, update)
+	if err != nil {
+		d.logger.Error("error while updating recipie", zap.Int("id", recipie.ID), zap.Error(err))
+		return err
+	}
+	return nil
+}
+func (d *DataSource) DeleteRecipie(ctx context.Context, id int) (error) {
+	collection := d.client.Database(d.database).Collection(d.collection)
+	filter := bson.M{"id": id}
+	_, err := collection.DeleteOne(ctx, filter)
+	if err != nil {
+		d.logger.Error("error while deleting recipie", zap.Int("id", id), zap.Error(err))
+		return err
+	}
+	return nil
+}
