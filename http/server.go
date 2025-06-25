@@ -15,5 +15,6 @@ func NewServer(handlers Handlers) *Server {
 func (s *Server) ListenAndServe(address string) error {
 	router := gin.Default()
 	router.GET("/", s.handlers.RecipieHandlers.GetRecipie)
+	router.POST("/", s.handlers.RecipieHandlers.CreateRecipie)
 	return router.Run(address)
 }
