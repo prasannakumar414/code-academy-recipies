@@ -104,3 +104,23 @@ func (s *RecipieService) SearchRecipies(ctx context.Context, query string) (*mod
 	recipesPagination.Recipies = recipies
 	return &recipesPagination, nil
 }
+
+func (s *RecipieService) SearchRecipiesPagination(ctx context.Context, query string, skip int, limit int) (*models.RecipiePagination, error) {
+	recipies, err := s.d.SearchRecipies(ctx, query, skip, limit)
+	if err != nil {
+		return nil, err
+	}
+	count, err := s.d.GetRecipiesCount(ctx)
+	if err != nil {
+		return nil, err
+	}
+	var recipesPagination models.RecipiePagination
+	recipiePaginationMeta := models.RecipiePaginationMeta{
+		Total: count,
+		Skipped: skip,
+		Limit: limit,
+	}
+	recipesPagination.Meta = recipiePaginationMeta
+	recipesPagination.Recipies = recipies
+	return &recipesPagination, nil
+}
