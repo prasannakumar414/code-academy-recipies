@@ -4,9 +4,11 @@ import (
 	"context"
 
 	"com.int.recipies/datasource/mongo"
+	"com.int.recipies/datasource/postgresql"
 	"com.int.recipies/http"
 	"com.int.recipies/http/handlers"
 	"com.int.recipies/service"
+	"github.com/jackc/pgx/v5"
 	"go.uber.org/zap"
 )
 
@@ -23,6 +25,14 @@ func main() {
 			panic(err)
 		}
 	}()
+	conn, err := pgx.Connect(context.Background(), "postgres://postgres:postgres@localhost:5432/postgres")
+	if err != nil {
+		logger.Error("Unable to connect to database", zap.Error(err))
+	}
+	defer conn.Close(context.Background())
+
+	_ = postgresql.NewRecipiesDB(conn, logger)
+
 	dataSource := mongo.NewDataSource(mongoClient, "recipies-db", "recipies", logger)
 	recipiesService := service.NewService(dataSource)
 	recipieHandler := handlers.NewRecipieHandler(recipiesService)

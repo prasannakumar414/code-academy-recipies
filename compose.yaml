@@ -1,0 +1,15 @@
+name: recipies
+
+services: 
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - 5432:5432
+    volumes:
+      - db-data:/var/lib/postgresql/
+
+volumes:
+  db-data:
+  
