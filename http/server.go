@@ -1,6 +1,9 @@
 package http
 
-import "github.com/gin-gonic/gin"
+import (
+	"com.int.recipies/http/middleware"
+	"github.com/gin-gonic/gin"
+)
 
 type Server struct {
 	handlers Handlers
@@ -14,6 +17,7 @@ func NewServer(handlers Handlers) *Server {
 
 func (s *Server) ListenAndServe(address string) error {
 	router := gin.Default()
+	router.Use(middleware.SomeMiddleWare())
 	router.GET("/", s.handlers.RecipieHandlers.GetRecipie)
 	router.POST("/", s.handlers.RecipieHandlers.CreateRecipie)
 	router.DELETE("/", s.handlers.RecipieHandlers.DeleteRecipie)
