@@ -31,10 +31,10 @@ func main() {
 	}
 	defer conn.Close(context.Background())
 
-	_ = postgresql.NewRecipiesDB(conn, logger)
+	recipiesDB := postgresql.NewRecipiesDB(conn, logger)
 
-	dataSource := mongo.NewDataSource(mongoClient, "recipies-db", "recipies", logger)
-	recipiesService := service.NewService(dataSource)
+	_ = mongo.NewDataSource(mongoClient, "recipies-db", "recipies", logger)
+	recipiesService := service.NewService(recipiesDB, logger)
 	recipieHandler := handlers.NewRecipieHandler(recipiesService)
 	handlers := http.Handlers{
 		RecipieHandlers: *recipieHandler,

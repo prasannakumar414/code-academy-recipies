@@ -26,14 +26,14 @@ func NewDataSource(client *mongo.Client, database string, collection string, log
 	}
 }
 
-func (d *DataSource) CreateRecipie(ctx context.Context, recipie models.Recipie) (int, error) {
+func (d *DataSource) CreateRecipie(ctx context.Context, recipie models.Recipie) (error) {
 	collection := d.client.Database(d.database).Collection(d.collection)
 	_, err := collection.InsertOne(ctx, recipie)
 	if err != nil {
 		d.logger.Error("error when creating recipie", zap.Error(err))
-		return -1, err
+		return err
 	}
-	return recipie.ID, nil
+	return nil
 }
 
 func (d *DataSource) GetRecipie(ctx context.Context, id int) (*models.Recipie, error) {
